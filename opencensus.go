@@ -7,6 +7,8 @@ import (
 	"errors"
 	"sync"
 	"time"
+	"strings"
+	"fmt"
 
 	"github.com/devopsfaith/krakend/config"
 	"go.opencensus.io/plugin/ochttp"
@@ -85,6 +87,35 @@ func (c composableRegister) Register(ctx context.Context, cfg Config, vs []*view
 	c.setDefaultSampler(cfg.SampleRate)
 	c.setReportingPeriod(time.Duration(cfg.ReportingPeriod) * time.Second)
 
+	fmt.Printf("Config - %v\n", cfg)
+	// modify tags provided in each metric based on the configuration
+	// ref: https://godoc.org/go.opencensus.io/plugin/ochttp#pkg-variables
+	for _, view := range vs {
+		fmt.Printf("2:%s - %v\n", view.Name, view.TagKeys)
+
+		if strings.Contains(view.Name, "http/client") {
+			//view.TagKeys = append(view.TagKeys, ochttp.KeyClientHost)
+			view.TagKeys = append(view.TagKeys, ochttp.KeyClientPath)
+			//view.TagKeys = append(view.TagKeys, ochttp.KeyClientMethod)
+			//view.TagKeys = append(view.TagKeys, ochttp.KeyClientStatus)
+		}
+
+		// cfg.Exporters.Prometheus.PerEndpoint
+		if strings.Contains(view.Name, "http/server") {
+			//view.TagKeys = append(view.TagKeys, ochttp.Host)
+			view.TagKeys = append(view.TagKeys, ochttp.Path)
+			//view.TagKeys = append(view.TagKeys, ochttp.Method)
+			//view.TagKeys = append(view.TagKeys, ochttp.StatusCode)
+			/*
+			if cfg.Exporters.Prometheus.PerBackend {
+				
+			}
+			*/
+		}
+
+		fmt.Printf("2:%s - %v\n", view.Name, view.TagKeys)
+	}
+
 	return c.registerViews(vs...)
 }
 
@@ -114,8 +145,10 @@ type Config struct {
 			ServiceName string `json:"service_name"`
 		} `json:"jaeger"`
 		Prometheus *struct {
-			Namespace string `json:"namespace"`
-			Port      int    `json:"port"`
+			Namespace   string `json:"namespace"`
+			Port        int    `json:"port"`
+			//PerEndpoint bool   `json:"per_endpoint"`
+			//PerBackend  bool   `json:"per_backend"`
 		} `json:"prometheus"`
 		Logger *struct{} `json:"logger"`
 		Xray   *struct {
