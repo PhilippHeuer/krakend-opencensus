@@ -15,13 +15,13 @@ import (
 	"github.com/devopsfaith/krakend/transport/http/client"
 	"github.com/gin-gonic/gin"
 
-	"github.com/devopsfaith/krakend-opencensus"
-	"github.com/devopsfaith/krakend-opencensus/exporter"
-	_ "github.com/devopsfaith/krakend-opencensus/exporter/influxdb"
-	_ "github.com/devopsfaith/krakend-opencensus/exporter/jaeger"
-	_ "github.com/devopsfaith/krakend-opencensus/exporter/prometheus"
-	_ "github.com/devopsfaith/krakend-opencensus/exporter/zipkin"
-	opencensusgin "github.com/devopsfaith/krakend-opencensus/router/gin"
+	"github.com/philippheuer/krakend-opencensus"
+	"github.com/philippheuer/krakend-opencensus/exporter"
+	_ "github.com/philippheuer/krakend-opencensus/exporter/influxdb"
+	_ "github.com/philippheuer/krakend-opencensus/exporter/jaeger"
+	_ "github.com/philippheuer/krakend-opencensus/exporter/prometheus"
+	_ "github.com/philippheuer/krakend-opencensus/exporter/zipkin"
+	opencensusgin "github.com/philippheuer/krakend-opencensus/router/gin"
 )
 
 func main() {

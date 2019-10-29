@@ -5,7 +5,7 @@ import (
 	"errors"
 	"time"
 
-	opencensus "github.com/devopsfaith/krakend-opencensus"
+	opencensus "github.com/philippheuer/krakend-opencensus"
 	"github.com/kpacha/opencensus-influxdb"
 )
 

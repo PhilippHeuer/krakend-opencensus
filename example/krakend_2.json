@@ -30,7 +30,7 @@
         }
     ],
     "extra_config": {
-        "github_com/devopsfaith/krakend-opencensus": {
+        "github_com/philippheuer/krakend-opencensus": {
             "sample_rate": 100,
             "reporting_period": 1
         }

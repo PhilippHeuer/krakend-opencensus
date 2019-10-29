@@ -135,7 +135,7 @@ type Config struct {
 
 const (
 	ContextKey = "opencensus-request-span"
-	Namespace  = "github_com/devopsfaith/krakend-opencensus"
+	Namespace  = "github_com/philippheuer/krakend-opencensus"
 )
 
 var (

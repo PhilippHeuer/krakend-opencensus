@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"contrib.go.opencensus.io/exporter/prometheus"
-	opencensus "github.com/devopsfaith/krakend-opencensus"
+	opencensus "github.com/philippheuer/krakend-opencensus"
 )
 
 func init() {

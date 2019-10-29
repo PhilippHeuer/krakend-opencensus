@@ -11,7 +11,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/devopsfaith/krakend-opencensus"
+	"github.com/philippheuer/krakend-opencensus"
 	"github.com/devopsfaith/krakend/config"
 	"github.com/devopsfaith/krakend/proxy"
 	"go.opencensus.io/plugin/ochttp"
@@ -20,7 +20,7 @@ import (
 
 var (
 	extraConfig = []byte(`{
-		"github_com/devopsfaith/krakend-opencensus": {
+		"github_com/philippheuer/krakend-opencensus": {
 			"enabled_layers": {
 				"router": true
 			}

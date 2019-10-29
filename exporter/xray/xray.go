@@ -10,7 +10,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/xray"
-	opencensus "github.com/devopsfaith/krakend-opencensus"
+	opencensus "github.com/philippheuer/krakend-opencensus"
 )
 
 func init() {
