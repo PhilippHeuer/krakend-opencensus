@@ -8,7 +8,6 @@ import (
 	"sync"
 	"time"
 	"strings"
-	"fmt"
 
 	"github.com/devopsfaith/krakend/config"
 	"go.opencensus.io/plugin/ochttp"
@@ -90,8 +89,6 @@ func (c composableRegister) Register(ctx context.Context, cfg Config, vs []*view
 	// modify metric tags
 	// ref: https://godoc.org/go.opencensus.io/plugin/ochttp#pkg-variables
 	for _, view := range vs {
-		fmt.Printf("2:%s - %v\n", view.Name, view.TagKeys)
-
 		// client metrics (method + statuscode tags are enabled by default)
 		if strings.Contains(view.Name, "http/client") {
 			// Host
@@ -117,7 +114,10 @@ func (c composableRegister) Register(ctx context.Context, cfg Config, vs []*view
 
 		// server metrics
 		if strings.Contains(view.Name, "http/server") {
-			// Host isn't useful here as it's always empty
+			// Host
+			if cfg.Exporters.Prometheus.HostTag {
+				view.TagKeys = appendIfMissing(view.TagKeys, ochttp.Host)
+			}
 
 			// Path
 			if cfg.Exporters.Prometheus.PathTag {
@@ -134,8 +134,6 @@ func (c composableRegister) Register(ctx context.Context, cfg Config, vs []*view
 				view.TagKeys = appendIfMissing(view.TagKeys, ochttp.StatusCode)
 			}
 		}
-
-		fmt.Printf("2:%s - %v\n", view.Name, view.TagKeys)
 	}
 
 	return c.registerViews(vs...)
@@ -167,12 +165,12 @@ type Config struct {
 			ServiceName string `json:"service_name"`
 		} `json:"jaeger"`
 		Prometheus *struct {
-			Namespace   string  `json:"namespace"`
-			Port        int     `json:"port"`
-			HostTag bool        `json:"tag_host"`
-			PathTag  bool       `json:"tag_path"`
-			MethodTag  bool     `json:"tag_method"`
-			StatusCodeTag  bool `json:"tag_statuscode"`
+			Namespace     string `json:"namespace"`
+			Port          int    `json:"port"`
+			HostTag       bool   `json:"tag_host"`
+			PathTag       bool   `json:"tag_path"`
+			MethodTag     bool   `json:"tag_method"`
+			StatusCodeTag bool   `json:"tag_statuscode"`
 		} `json:"prometheus"`
 		Logger *struct{} `json:"logger"`
 		Xray   *struct {
