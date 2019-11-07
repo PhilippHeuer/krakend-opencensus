@@ -167,12 +167,12 @@ type Config struct {
 			ServiceName string `json:"service_name"`
 		} `json:"jaeger"`
 		Prometheus *struct {
-			Namespace     string `json:"namespace"`
-			Port          int    `json:"port"`
-			HostTag       bool   `json:"tag_host"`
-			PathTag       bool   `json:"tag_path"`
-			MethodTag     bool   `json:"tag_method"`
-			StatusCodeTag bool   `json:"tag_statuscode"`
+			Namespace       string `json:"namespace"`
+			Port            int    `json:"port"`
+			HostTag         bool   `json:"tag_host"`
+			PathTag         bool   `json:"tag_path"`
+			MethodTag       bool   `json:"tag_method"`
+			StatusCodeTag   bool   `json:"tag_statuscode"`
 		} `json:"prometheus"`
 		Logger *struct{} `json:"logger"`
 		Xray   *struct {
@@ -188,6 +188,10 @@ type Config struct {
 			DefaultLabels map[string]string `json:"default_labels"`
 		} `json:"stackdriver"`
 	} `json:"exporters"`
+}
+
+type EndpointExtraConfig struct {
+	PathAggregation string `json:"path_aggregation"`
 }
 
 const (
@@ -246,6 +250,20 @@ func IsBackendEnabled() bool {
 func parseCfg(srvCfg config.ServiceConfig) (*Config, error) {
 	cfg := new(Config)
 	tmp, ok := srvCfg.ExtraConfig[Namespace]
+	if !ok {
+		return nil, errNoExtraConfig
+	}
+	buf := new(bytes.Buffer)
+	json.NewEncoder(buf).Encode(tmp)
+	if err := json.NewDecoder(buf).Decode(cfg); err != nil {
+		return nil, err
+	}
+	return cfg, nil
+}
+
+func ParseEndpointConfig(endpointCfg *config.EndpointConfig) (*EndpointExtraConfig, error) {
+	cfg := new(EndpointExtraConfig)
+	tmp, ok := endpointCfg.ExtraConfig[Namespace]
 	if !ok {
 		return nil, errNoExtraConfig
 	}

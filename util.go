@@ -1,7 +1,7 @@
 package opencensus
 
 import (
-	"go.opencensus.io/tag"
+    "go.opencensus.io/tag"
 )
 
 func appendIfMissing(slice []tag.Key, i tag.Key) []tag.Key {
