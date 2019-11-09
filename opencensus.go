@@ -9,6 +9,7 @@ import (
 	"sync"
 	"time"
 	"strings"
+	"fmt"
 
 	"github.com/devopsfaith/krakend/config"
 	"go.opencensus.io/plugin/ochttp"
@@ -300,7 +301,7 @@ func GetAggregatedPathForMetrics(cfg *config.EndpointConfig, r *http.Request) st
 
 	if aggregationMode == "lastparam" {
 		// only aggregates the last section of the path if it is a parameter, will default to pattern mode if the last part of the url is not a parameter (misconfiguration)
-		lastArgument := string(cfg.Endpoint[strings.LastIndex(cfg.Endpoint, ":"):])
+		lastArgument := string(cfg.Endpoint[strings.LastIndex(cfg.Endpoint, "/")+1:])
 		if strings.HasPrefix(lastArgument, ":") {
 			// lastArgument is a parameter, aggregate and overwrite path
 			return string(r.URL.Path[0:strings.LastIndex(r.URL.Path, "/")+1])+lastArgument
@@ -321,9 +322,14 @@ func GetAggregatedPathForBackendMetrics(cfg *config.Backend, r *http.Request) st
 		aggregationMode = endpointExtraCfg.PathAggregation
 	}
 
+	fmt.Printf("%v\n", aggregationMode)
+	fmt.Printf("%v\n", cfg)
+	fmt.Printf("%v\n", r)
+	fmt.Printf("%v\n", cfg.URLPattern)
+	
 	if aggregationMode == "lastparam" {
 		// only aggregates the last section of the path if it is a parameter, will default to pattern mode if the last part of the url is not a parameter (misconfiguration)
-		lastArgument := string(cfg.URLPattern[strings.LastIndex(cfg.URLPattern, ":"):])
+		lastArgument := string(cfg.URLPattern[strings.LastIndex(cfg.URLPattern, "/")+1:])
 		if strings.HasPrefix(lastArgument, ":") {
 			// lastArgument is a parameter, aggregate and overwrite path
 			return string(r.URL.Path[0:strings.LastIndex(r.URL.Path, "/")+1])+lastArgument
