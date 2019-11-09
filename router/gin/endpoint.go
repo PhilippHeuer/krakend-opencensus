@@ -3,7 +3,6 @@ package gin
 import (
 	"net/http"
 	"time"
-	"strings"
 
 	"github.com/devopsfaith/krakend/config"
 	"github.com/devopsfaith/krakend/proxy"
@@ -46,7 +45,7 @@ func HandlerFunc(cfg *config.EndpointConfig, next gin.HandlerFunc, prop propagat
             func(r *http.Request) tag.Mutator { return tag.Upsert(ochttp.Method, r.Method) },
         },
 	}
-	h.tags = append(h.tags, func(r *http.Request) tag.Mutator { return tag.Upsert(ochttp.Path, opencensus.GetStatisticsPathForEndpoint(cfg, r) })
+	h.tags = append(h.tags, func(r *http.Request) tag.Mutator { return tag.Upsert(ochttp.Path, opencensus.GetStatisticsPathForEndpoint(cfg, r)) })
 	return h.HandlerFunc
 }
 

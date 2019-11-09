@@ -15,7 +15,15 @@ func New(hf mux.HandlerFactory) mux.HandlerFactory {
 		return hf
 	}
 	return func(cfg *config.EndpointConfig, p proxy.Proxy) http.HandlerFunc {
-		handler := ochttp.Handler{Handler: hf(cfg, p)}
-		return handler.ServeHTTP
+		h := ochttp.Handler{Handler: metricsReportingMiddleware(hf(cfg, p), cfg)}
+		return h.ServeHTTP
 	}
+}
+
+func metricsReportingMiddleware(next http.Handler, cfg *config.EndpointConfig) http.Handler {
+    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := r.Context()
+		ochttp.SetRoute(ctx, opencensus.GetStatisticsPathForEndpoint(cfg, r))
+		next.ServeHTTP(w, r)
+    })
 }

@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"net/http"
 	"sync"
 	"time"
 	"strings"
@@ -288,7 +289,7 @@ func GetStatisticsPathForEndpoint(cfg *config.EndpointConfig, r *http.Request) s
 		lastArgument := string(cfg.Endpoint[strings.LastIndex(cfg.Endpoint, ":"):])
 		if strings.HasPrefix(lastArgument, ":") {
 			// lastArgument is a parameter, aggregate and overwrite path
-			return string(r.URL.Path[0:strings.LastIndex(r.URL.Path, "/")+1])+lastArgument)
+			return string(r.URL.Path[0:strings.LastIndex(r.URL.Path, "/")+1])+lastArgument
 		}
 	} else if aggregationMode == "off" {
 		// no aggregration (use with caution!)
