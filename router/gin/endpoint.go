@@ -43,31 +43,10 @@ func HandlerFunc(cfg *config.EndpointConfig, next gin.HandlerFunc, prop propagat
 		tags: []tagGenerator{
 			func(r *http.Request) tag.Mutator { return tag.Upsert(ochttp.KeyServerRoute, cfg.Endpoint) },
 			func(r *http.Request) tag.Mutator { return tag.Upsert(ochttp.Host, r.URL.Host) },
-			func(r *http.Request) tag.Mutator { return tag.Upsert(ochttp.Path, cfg.Endpoint) },
             func(r *http.Request) tag.Mutator { return tag.Upsert(ochttp.Method, r.Method) },
         },
 	}
-
-	// cfg.Exporters.Prometheus.PathAggregation
-	// path aggregation configurable per endpoint via ExtraConfig
-	aggregationMode := "endpoint"
-	endpointExtraCfg, endpointExtraCfgErr := opencensus.ParseEndpointConfig(cfg)
-	if endpointExtraCfgErr == nil {
-		aggregationMode = endpointExtraCfg.PathAggregation
-	}
-
-	if aggregationMode == "smart" {
-		// only aggregates if the last part is a parameter
-		lastArgument := string(cfg.Endpoint[strings.LastIndex(cfg.Endpoint, ":"):])
-		if strings.HasPrefix(lastArgument, ":") {
-			// lastArgument is a parameter, aggregate and overwrite path
-			h.tags = append(h.tags, func(r *http.Request) tag.Mutator { return tag.Upsert(ochttp.Path, string(r.URL.Path[0:strings.LastIndex(r.URL.Path, "/")+1])+lastArgument) })
-		}
-	} else if aggregationMode == "off" {
-		// no aggregration (risks gateway stability, use with caution!)
-		h.tags = append(h.tags, func(r *http.Request) tag.Mutator { return tag.Upsert(ochttp.Path, r.URL.Path) })
-	}
-
+	h.tags = append(h.tags, func(r *http.Request) tag.Mutator { return tag.Upsert(ochttp.Path, opencensus.GetStatisticsPathForEndpoint(cfg, r) })
 	return h.HandlerFunc
 }
 
