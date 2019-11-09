@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 
+	"github.com/devopsfaith/krakend/config"
 	transport "github.com/devopsfaith/krakend/transport/http/client"
 	"go.opencensus.io/plugin/ochttp"
 	"go.opencensus.io/trace"
@@ -18,7 +19,7 @@ func NewHTTPClient(ctx context.Context) *http.Client {
 	return defaultClient
 }
 
-func HTTPRequestExecutor(clientFactory transport.HTTPClientFactory) transport.HTTPRequestExecutor {
+func HTTPRequestExecutor(clientFactory transport.HTTPClientFactory, cfg *config.Backend) transport.HTTPRequestExecutor {
 	if !IsBackendEnabled() {
 		return transport.DefaultHTTPRequestExecutor(clientFactory)
 	}
@@ -27,6 +28,7 @@ func HTTPRequestExecutor(clientFactory transport.HTTPClientFactory) transport.HT
 		if _, ok := client.Transport.(*ochttp.Transport); !ok {
 			client.Transport = &ochttp.Transport{Base: client.Transport}
 		}
+		ochttp.SetRoute(req.Context(), GetAggregatedPathForBackendMetrics(cfg, req))
 		return client.Do(req.WithContext(trace.NewContext(ctx, fromContext(ctx))))
 	}
 }
