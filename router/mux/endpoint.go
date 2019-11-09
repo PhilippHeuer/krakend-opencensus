@@ -15,15 +15,14 @@ func New(hf mux.HandlerFactory) mux.HandlerFactory {
 		return hf
 	}
 	return func(cfg *config.EndpointConfig, p proxy.Proxy) http.HandlerFunc {
-		h := ochttp.Handler{Handler: metricsReportingMiddleware(hf(cfg, p), cfg)}
-		return h.ServeHTTP
+		handler := ochttp.Handler{Handler: tagAggregationMiddleware(hf(cfg, p), cfg)}
+		return handler.ServeHTTP
 	}
 }
 
-func metricsReportingMiddleware(next http.Handler, cfg *config.EndpointConfig) http.Handler {
+func tagAggregationMiddleware(next http.Handler, cfg *config.EndpointConfig) http.Handler {
     return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ctx := r.Context()
-		ochttp.SetRoute(ctx, opencensus.GetStatisticsPathForEndpoint(cfg, r))
+		ochttp.SetRoute(r.Context(), opencensus.GetAggregatedPathForMetrics(cfg, r))
 		next.ServeHTTP(w, r)
     })
 }
