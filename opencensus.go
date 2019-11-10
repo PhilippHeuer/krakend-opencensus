@@ -321,11 +321,6 @@ func GetAggregatedPathForBackendMetrics(cfg *config.Backend, r *http.Request) st
 	if endpointExtraCfgErr == nil {
 		aggregationMode = endpointExtraCfg.PathAggregation
 	}
-
-	fmt.Printf("%v\n", aggregationMode)
-	fmt.Printf("%v\n", cfg)
-	fmt.Printf("%v\n", r)
-	fmt.Printf("%v\n", cfg.URLPattern)
 	
 	if aggregationMode == "lastparam" {
 		// only aggregates the last section of the path if it is a parameter, will default to pattern mode if the last part of the url is not a parameter (misconfiguration)
