@@ -9,8 +9,6 @@ import (
 	"strings"
 	"sync"
 	"time"
-	"strings"
-	"fmt"
 
 	"github.com/devopsfaith/krakend/config"
 	"go.opencensus.io/plugin/ochttp"
