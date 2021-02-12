@@ -14,6 +14,7 @@ require (
 	github.com/aws/aws-sdk-go v1.15.31
 	github.com/devopsfaith/flatmap v0.0.0-20190327225844-8d71d61e07ac // indirect
 	github.com/devopsfaith/krakend v0.0.0-20190404101742-1d20c1916774
+	github.com/devopsfaith/krakend-opencensus v1.1.0
 	github.com/gin-contrib/sse v0.0.0-20170109093832-22d885f9ecc7 // indirect
 	github.com/gin-gonic/gin v1.1.5-0.20170702092826-d459835d2b07
 	github.com/go-ini/ini v1.37.0 // indirect
